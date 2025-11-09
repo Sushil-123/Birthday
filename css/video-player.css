@@ -1,0 +1,253 @@
+.video-player {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16/9;
+    background: #000;
+    border-radius: 10px;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.video-player video {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+
+
+
+
+/* Bottom Controls */
+.video-controls {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+    padding: 15px 20px 20px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+    z-index: 10;
+}
+
+.video-controls.show {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* Progress Bar */
+.progress-container {
+    margin-bottom: 15px;
+    padding: 5px 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.progress-bar {
+    flex: 1;
+    height: 10px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 5px;
+    cursor: pointer;
+    position: relative;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+    border-radius: 3px;
+    width: 0%;
+    transition: width 0.1s ease;
+}
+
+.progress-handle {
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 14px;
+    height: 14px;
+    background: white;
+    border-radius: 50%;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.time-tooltip {
+    position: absolute;
+    bottom: 20px;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.169);
+    color: rgb(255, 252, 252);
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-weight: 500;
+    font-size: 14px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+    white-space: nowrap;
+}
+
+/* Controls Row */
+.controls-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.left-controls,
+.right-controls {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.ctrl-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: white;
+    padding: 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 32px;
+    height: 32px;
+}
+
+.ctrl-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.05);
+}
+
+/* Volume Control */
+.volume-control {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.volume-slider {
+    width: 60px;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
+    cursor: pointer;
+    position: relative;
+}
+
+.volume-fill {
+    height: 100%;
+    background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+    border-radius: 2px;
+    width: 100%;
+    transition: width 0.1s ease;
+}
+
+/* Time Display */
+.time-display {
+    color: white;
+    font-size: 13px;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+/* Fullscreen Styles */
+.video-player:fullscreen {
+    border-radius: 0;
+    aspect-ratio: unset;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.video-player:fullscreen video {
+    object-fit: contain;
+    width: 100%;
+    height: 100%;
+}
+
+
+
+/* Responsive */
+@media (max-width: 768px) {
+    .center-btn {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .center-btn.play-btn {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .volume-slider {
+        width: 60px;
+        height: 6px;
+    }
+    
+    .time-display {
+        font-size: 11px;
+    }
+    
+    .ctrl-btn {
+        min-width: 28px;
+        height: 28px;
+        padding: 6px;
+    }
+    
+    .left-controls,
+    .right-controls {
+        gap: 8px;
+    }
+    
+    .video-controls {
+        padding: 10px 15px 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .center-btn {
+        width: 35px;
+        height: 35px;
+    }
+    
+    .center-btn.play-btn {
+        width: 50px;
+        height: 50px;
+    }
+    
+    .volume-slider {
+        width: 50px;
+        height: 6px;
+    }
+    
+    .time-display {
+        font-size: 10px;
+    }
+    
+    .ctrl-btn {
+        min-width: 24px;
+        height: 24px;
+        padding: 4px;
+    }
+    
+    .left-controls,
+    .right-controls {
+        gap: 6px;
+    }
+    
+    .video-controls {
+        padding: 8px 12px 12px;
+    }
+    
+    .progress-container {
+        margin-bottom: 10px;
+    }
+}
