@@ -632,9 +632,9 @@ function handleBrightnessGesture(brightnessChange) {
     const change = brightnessChange * 100;
     currentBrightness = Math.max(0, Math.min(100, currentBrightness + change));
     
-    // Map 0-100% to 0.3-1.2 range (30% to 120% actual brightness)
-    // This prevents complete blackness and allows slight over-brightness
-    const actualBrightness = 0.3 + (currentBrightness / 100) * 0.9;
+    // Map 0-100% to 0.1-3.0 range (10% to 300% actual brightness)
+    // This allows very dim to very bright video
+    const actualBrightness = 0.1 + (currentBrightness / 100) * 2.9;
     video.style.filter = `brightness(${actualBrightness})`;
     
     showGestureIndicator('brightness', `${Math.round(currentBrightness)}%`);

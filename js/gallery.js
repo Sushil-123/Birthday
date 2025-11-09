@@ -154,7 +154,6 @@ function openModal(item, type, index = 0) {
     currentMediaArray = type === 'photo' ? galleryData.photos : galleryData.videos;
     
     updateModalContent();
-    updateIndicator();
     
     modal.style.display = 'block';
     document.body.style.overflow = 'hidden';
@@ -166,7 +165,7 @@ function updateModalContent() {
     
     if (currentMediaType === 'photo') {
         modalMedia.innerHTML = `
-            <img src="${item.src}" alt="${item.title}">
+            <img src="${item.src}" alt="${item.title}" id="modalImage">
             <button class="nav-btn prev-btn" onclick="navigateMedia(-1)">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
                     <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
@@ -175,6 +174,16 @@ function updateModalContent() {
             <button class="nav-btn next-btn" onclick="navigateMedia(1)">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
                     <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
+                </svg>
+            </button>
+            <button class="image-fullscreen-btn" onclick="toggleImageFullscreen()" style="position: absolute; top: 20px; right: 60px; background: rgba(0,0,0,0.7); border: none; border-radius: 50%; width: 40px; height: 40px; cursor: pointer; z-index: 10;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="white">
+                    <path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/>
+                </svg>
+            </button>
+            <button class="image-rotate-btn" onclick="toggleImageRotation()" id="imageRotateBtn" style="position: absolute; top: 20px; right: 110px; background: rgba(0,0,0,0.7); border: none; border-radius: 50%; width: 40px; height: 40px; cursor: pointer; z-index: 10; display: none;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="white">
+                    <path d="M7.11 8.53L5.7 7.11C4.8 8.27 4.24 9.61 4.07 11h2.02c.14-.87.49-1.72 1.02-2.47zM6.09 13h2.02c.17 1.39.72 2.73 1.62 3.89l-1.41 1.42c-.9-1.16-1.45-2.5-1.23-5.31zm1.01 5.32c1.16.9 2.51 1.44 3.9 1.61V17.9c-.87-.15-1.71-.49-2.46-1.03L7.1 18.32zM13 4.07V1L8.45 5.55 13 10V6.09c2.84.48 5 2.94 5 5.91s-2.16 5.43-5 5.91v2.02c3.95-.49 7-3.85 7-7.93s-3.05-7.44-7-7.93z"/>
                 </svg>
             </button>
         `;
@@ -203,7 +212,6 @@ function navigateMedia(direction) {
     }
     
     updateModalContent();
-    updateIndicator();
 }
 
 function updateIndicator() {
@@ -223,6 +231,8 @@ function closeModal() {
         video.pause();
         video.currentTime = 0;
     });
+    
+    resetImageRotation();
 }
 
 document.getElementById('modal').addEventListener('click', function(e) {
@@ -315,6 +325,85 @@ function createYouTubePlayer(item) {
             <iframe src="https://www.youtube.com/embed/${item.src}?autoplay=0&controls=1&rel=0" allowfullscreen></iframe>
         </div>
     `;
+}
+
+let isImagePortrait = false;
+
+function toggleImageRotation() {
+    if (!document.fullscreenElement) {
+        alert('Rotation only works in fullscreen mode');
+        return;
+    }
+    
+    if (!screen.orientation || !screen.orientation.lock) {
+        alert('Screen orientation API not supported on this browser');
+        return;
+    }
+    
+    isImagePortrait = !isImagePortrait;
+    
+    try {
+        const orientation = isImagePortrait ? 'portrait-primary' : 'landscape-primary';
+        screen.orientation.lock(orientation).then(() => {
+            console.log('Screen rotated to:', orientation);
+        }).catch(err => {
+            console.warn('Rotation failed:', err);
+            // Fallback to CSS rotation if API fails
+            const modal = document.getElementById('modal');
+            if (modal) {
+                modal.style.transform = isImagePortrait ? 'rotate(90deg)' : 'rotate(0deg)';
+                modal.style.transformOrigin = 'center center';
+                modal.style.transition = 'transform 0.3s ease';
+            }
+        });
+    } catch (err) {
+        console.warn('Screen orientation lock error:', err);
+        // Fallback to CSS rotation
+        const modal = document.getElementById('modal');
+        if (modal) {
+            modal.style.transform = isImagePortrait ? 'rotate(90deg)' : 'rotate(0deg)';
+            modal.style.transformOrigin = 'center center';
+            modal.style.transition = 'transform 0.3s ease';
+        }
+    }
+}
+
+function toggleImageFullscreen() {
+    const modal = document.getElementById('modal');
+    const rotateBtn = document.getElementById('imageRotateBtn');
+    
+    if (!document.fullscreenElement) {
+        if (modal.requestFullscreen) {
+            modal.requestFullscreen();
+        }
+        // Show rotate button in fullscreen
+        if (rotateBtn) {
+            rotateBtn.style.display = 'block';
+        }
+    } else {
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+        }
+        // Reset rotation and hide rotate button
+        resetImageRotation();
+        if (rotateBtn) {
+            rotateBtn.style.display = 'none';
+        }
+    }
+}
+
+function resetImageRotation() {
+    isImagePortrait = false;
+    if (screen.orientation && screen.orientation.unlock) {
+        screen.orientation.unlock();
+    }
+    // Clear CSS fallback styles
+    const modal = document.getElementById('modal');
+    if (modal) {
+        modal.style.transform = '';
+        modal.style.transformOrigin = '';
+        modal.style.transition = '';
+    }
 }
 
 
